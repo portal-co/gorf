@@ -238,8 +238,9 @@ impl Incr for String {
         *self = format!("%${self}")
     }
 }
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash)]
+#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Serialize, Deserialize)]
 #[repr(transparent)]
+#[serde(transparent)]
 pub struct Id(pub String);
 impl Incr for Id {
     fn incr(&mut self) {
