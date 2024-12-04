@@ -1,10 +1,6 @@
 // pub mod rat;
 use std::{
-    collections::{BTreeMap, BTreeSet},
-    convert::Infallible,
-    hash::Hash,
-    marker::PhantomData,
-    ops::Index,
+    collections::{BTreeMap, BTreeSet}, convert::Infallible, fmt::Display, hash::Hash, marker::PhantomData, ops::Index 
 };
 
 use chumsky::{prelude::*, text::keyword, Error};
@@ -258,6 +254,11 @@ impl From<usize> for Id {
 impl From<String> for Id {
     fn from(value: String) -> Self {
         return Id(value);
+    }
+}
+impl Display for Id{
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f,"{}",self.0)
     }
 }
 // pub trait SimpleBinder {}

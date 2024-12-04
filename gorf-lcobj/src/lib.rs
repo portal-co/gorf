@@ -57,22 +57,32 @@ impl<V: Binder<Var: Clone> + From<String> + Display + Ord + Clone, M: Clone> Obj
             Some(s) => s.deps.iter().any(|d| self.sees(d, w)),
         }
     }
-    pub fn rbake(&self, v: &V, y: &GTerm<V, M>, stack: &BTreeSet<V>) -> GTerm<V, M> {
+    pub fn rbake(&self, v: &V, stack: &BTreeSet<V>) -> GTerm<V, M> {
         if stack.contains(v) {
-            return gorf_core::var(V::get_var(format!("@{v}").into()));
+            let v = gorf_core::var(V::get_var(format!("@{v}").into()));
+            return gorf_core::app(v.clone(), v);
         }
         let mut stack = stack.clone();
         stack.insert(v.clone());
         let s = self.syms.get(v).unwrap();
         let mut b = GTerm::Var(v.get_var_ref().clone());
         for d in s.deps.iter() {
-            b = gorf_core::app(b, self.rbake(d, y, &stack))
+            b = gorf_core::app(b, self.rbake(d, &stack))
         }
 
-        return gorf_core::app(y.clone(), gorf_core::abs(format!("@{v}").into(), b));
+        return gorf_core::app(
+            gorf_core::abs(
+                v.clone(),
+                gorf_core::app(
+                    gorf_core::var(v.get_var_ref().clone()),
+                    gorf_core::var(v.get_var_ref().clone()),
+                ),
+            ),
+            gorf_core::abs(format!("@{v}").into(), b),
+        );
     }
-    pub fn link(&self, root: &V, y: &GTerm<V, M>) -> GTerm<V, M> {
-        let mut x = self.rbake(root, y, &BTreeSet::new());
+    pub fn link(&self, root: &V) -> GTerm<V, M> {
+        let mut x = self.rbake(root, &BTreeSet::new());
         for (k, v) in self.syms.clone().into_iter() {
             x = gorf_core::app(gorf_core::abs(k, x), v.emit());
         }
