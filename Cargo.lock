@@ -98,14 +98,14 @@ checksum = "e6d5a32815ae3f33302d95fdcb2ce17862f8c65363dcfd29360480ba1001fc9c"
 
 [[package]]
 name = "gorf-blc"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "lambda_calculus",
 ]
 
 [[package]]
 name = "gorf-blc2"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "bitvec",
  "lambda_calculus",
@@ -113,7 +113,7 @@ dependencies = [
 
 [[package]]
 name = "gorf-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "castaway",
@@ -127,7 +127,7 @@ dependencies = [
 
 [[package]]
 name = "gorf-gen-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "chumsky",
  "gorf-core",
@@ -139,7 +139,7 @@ dependencies = [
 
 [[package]]
 name = "gorf-gen-macro"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "chumsky",
  "gorf-core",
@@ -151,14 +151,14 @@ dependencies = [
 
 [[package]]
 name = "gorf-kiselyov"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "lambda_calculus",
 ]
 
 [[package]]
 name = "gorf-lcobj"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "gorf-core",
  "gorf-kiselyov",
@@ -187,7 +187,7 @@ dependencies = [
 
 [[package]]
 name = "lambda-rt"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "dyn-clone",
  "gorf-gen-macro",
@@ -195,7 +195,7 @@ dependencies = [
 
 [[package]]
 name = "lambda-rt-test"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "lambda-rt",
 ]
