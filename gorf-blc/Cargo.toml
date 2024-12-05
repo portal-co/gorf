@@ -1,0 +1,9 @@
+[package]
+name = "gorf-blc"
+version = "0.1.0"
+edition = "2021"
+license = "CC0-1.0"
+description = "Lambda calulcus backend library"
+
+[dependencies]
+lambda_calculus = "3.3.0"

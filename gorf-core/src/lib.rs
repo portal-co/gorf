@@ -1,6 +1,11 @@
 // pub mod rat;
 use std::{
-    collections::{BTreeMap, BTreeSet}, convert::Infallible, fmt::Display, hash::Hash, marker::PhantomData, ops::Index 
+    collections::{BTreeMap, BTreeSet},
+    convert::Infallible,
+    fmt::Display,
+    hash::Hash,
+    marker::PhantomData,
+    ops::Index,
 };
 
 use chumsky::{prelude::*, text::keyword, Error};
@@ -257,9 +262,9 @@ impl From<String> for Id {
         return Id(value);
     }
 }
-impl Display for Id{
+impl Display for Id {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f,"{}",self.0)
+        write!(f, "{}", self.0)
     }
 }
 // pub trait SimpleBinder {}
@@ -277,7 +282,10 @@ macro_rules! simple_binder {
             fn get_var_mut(&mut self) -> &mut Self::Var {
                 return self;
             }
-            fn inside<X: $crate::Binder<Var = X>>(self, f: &mut impl FnMut(Self::Var) -> X) -> Self::Wrap<X> {
+            fn inside<X: $crate::Binder<Var = X>>(
+                self,
+                f: &mut impl FnMut(Self::Var) -> X,
+            ) -> Self::Wrap<X> {
                 return f(self);
             }
         }
@@ -516,6 +524,11 @@ pub struct Scott<V: Binder, M> {
     pub current_case: usize,
     pub with: Vec<GTerm<V, M>>,
 }
+#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash)]
+pub struct Let<V: Binder<Var: Ord>, M> {
+    pub vars: BTreeMap<V::Var, GTerm<V, M>>,
+    pub body: GTerm<V, M>,
+}
 impl<V: Binder + Clone, M: Clone> Scott<V, M>
 where
     V::Var: Eq + Ord + Clone,
@@ -587,6 +600,22 @@ where
         let mut r = BTreeSet::new();
         self.frees_internal(&mut r);
         return r;
+    }
+    pub fn r#let(self) -> Let<V, M> {
+        let mut l = Let {
+            body: self,
+            vars: BTreeMap::new(),
+        };
+        loop {
+            let GTerm::App(a) = l.body.clone() else {
+                return l;
+            };
+            let GTerm::Abs(b) = a.0 else {
+                return l;
+            };
+            l.vars.insert(b.0.get_var(), a.1);
+            l.body = b.1;
+        }
     }
     pub fn scott(&self) -> Option<Scott<V, M>> {
         let mut this = self;

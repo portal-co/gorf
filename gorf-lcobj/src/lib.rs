@@ -5,6 +5,7 @@ use std::{
 
 use gorf_core::{Binder, GTerm};
 use serde::{Deserialize, Serialize};
+pub mod make;
 #[derive(Serialize, Deserialize)]
 pub struct Symbol<V: Binder, M> {
     pub deps: Vec<V>,
