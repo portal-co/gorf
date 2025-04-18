@@ -6,4 +6,4 @@ license = "CC0-1.0"
 description = "Lambda calulcus backend library"
 
 [dependencies]
-lambda_calculus = "3.3.0"
+lambda_calculus.workspace = true

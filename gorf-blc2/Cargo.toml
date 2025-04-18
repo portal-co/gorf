@@ -7,4 +7,4 @@ description = "Lambda calulcus backend library"
 
 [dependencies]
 bitvec = "1.0.1"
-lambda_calculus = "3.3.0"
+lambda_calculus.workspace = true

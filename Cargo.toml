@@ -3,6 +3,11 @@ members=["gorf-core","gorf-kiselyov","lambda-rt","lambda-rt-test","gorf-gen-core
 resolver="2"
 
 [workspace.dependencies]
+
+lambda_calculus = "3.3.0"
+
+
+
 webc = { version = "6.0.0-rc1", default-features = false, features = ["package"] }
 cxx = "1.0"
 noak="0.6.0"
@@ -39,7 +44,7 @@ multimap = "0.10.0"
 chumsky = "0.9.3"
 either = "1.8.1"
 inventory = "0.3.9"
-lambda_calculus = "3.3.0"
+
 num-bigint = "0.4.3"
 num-traits = "0.2.16"
 pqc_kyber = "0.7.1"

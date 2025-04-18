@@ -8,5 +8,6 @@ description = "Lambda calulcus backend library"
 [dependencies]
 gorf-core = { version = "0.1.0", path = "../gorf-core" }
 gorf-kiselyov = { version = "0.1.0", path = "../gorf-kiselyov" }
-lambda_calculus = "3.3.0"
+lambda_calculus.workspace = true
+
 serde = { workspace = true, features = ["derive"] }
