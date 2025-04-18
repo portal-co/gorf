@@ -24,8 +24,8 @@ impl Parse for X {
             let _eq: Token![=] = input.parse()?;
             match i.to_string().as_str() {
                 "crate_path" => {
-                    let s: syn::LitStr = input.parse()?;
-                    o.opts.path = s.parse()?;
+                    // let s: syn::LitStr = input.parse()?;
+                    o.opts.path = input.parse()?;
                 }
                 _ => return Err(syn::Error::new(i.span(), "unexpected type")),
             };
