@@ -1,7 +1,10 @@
-use std::{
-    collections::{BTreeMap, BTreeSet},
+#![no_std]
+extern crate alloc;
+use alloc::{
+    boxed::Box, collections::{BTreeMap, BTreeSet}, string::String, vec::Vec};use core::{
     fmt::Display,
 };
+use alloc::format;
 
 use gorf_core::{Binder, GTerm};
 use serde::{Deserialize, Serialize};

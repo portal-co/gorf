@@ -1,4 +1,6 @@
-use std::{collections::BTreeMap, convert::Infallible};
+use alloc::collections::BTreeMap;
+use core::convert::Infallible;
+use alloc::{format,vec};
 
 use gorf_core::{brujin, debrijun, Id};
 use gorf_kiselyov::{RealSki, Ski};

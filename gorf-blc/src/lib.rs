@@ -1,4 +1,7 @@
-use std::iter::once;
+#![no_std]
+extern crate alloc;
+use alloc::boxed::Box;
+use core::iter::once;
 
 use lambda_calculus::Term;
 

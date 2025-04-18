@@ -1,3 +1,6 @@
+#![no_std]
+extern crate alloc;
+use alloc::{boxed::Box, vec::Vec};
 use lambda_calculus::Term;
 pub fn le(a: usize) -> Box<dyn Iterator<Item = bool>>{
     if a == 0{
@@ -5,7 +8,7 @@ pub fn le(a: usize) -> Box<dyn Iterator<Item = bool>>{
     }
     let len = usize::BITS - a.leading_zeros();
     let x = if len == 1{
-        vec![]
+        Vec::default()
     }else{
         (0..len - 2).rev().map(|a|1 << a).map(|v|a & v != 0).collect()
     };

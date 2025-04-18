@@ -1,12 +1,13 @@
 // pub mod rat;
-use std::{
-    collections::{BTreeMap, BTreeSet},
-    convert::Infallible,
-    fmt::Display,
-    hash::Hash,
-    marker::PhantomData,
-    ops::Index,
-};
+#![no_std]
+extern crate alloc;
+use alloc::boxed::Box;
+use alloc::collections::{BTreeMap, BTreeSet};
+use alloc::string::String;
+use alloc::format;
+use alloc::vec::Vec;
+use alloc::vec;
+use core::{convert::Infallible, fmt::Display, hash::Hash, marker::PhantomData, ops::Index};
 
 use chumsky::{prelude::*, text::keyword, Error};
 use either::Either::{self, Left, Right};
@@ -138,14 +139,14 @@ pub struct Ref<'a, V: Binder, M> {
 impl<'a, V: Binder, M> Ref<'a, V, M> {
     pub fn app(&mut self, x: GTerm<V, M>) {
         let mut b = Box::new((x, GTerm::Undef));
-        let c = unsafe { std::mem::transmute::<_, &'a mut (GTerm<V, M>, GTerm<V, M>)>(&mut *b) };
+        let c = unsafe { core::mem::transmute::<_, &'a mut (GTerm<V, M>, GTerm<V, M>)>(&mut *b) };
 
         *self.current = GTerm::App(b);
         self.current = &mut c.1;
     }
     pub fn abs(&mut self, x: V) {
         let mut b = Box::new((x, GTerm::Undef));
-        let c = unsafe { std::mem::transmute::<_, &'a mut (V, GTerm<V, M>)>(&mut *b) };
+        let c = unsafe { core::mem::transmute::<_, &'a mut (V, GTerm<V, M>)>(&mut *b) };
 
         *self.current = GTerm::Abs(b);
         self.current = &mut c.1;
@@ -263,7 +264,7 @@ impl From<String> for Id {
     }
 }
 impl Display for Id {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "{}", self.0)
     }
 }
