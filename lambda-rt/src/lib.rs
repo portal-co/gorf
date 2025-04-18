@@ -1,5 +1,10 @@
 #![no_std]
-extern crate alloc;
+#[doc(hidden)]
+pub extern crate alloc;
+#[doc(hidden)]
+pub mod __{
+    pub use core;
+}
 use core::sync::atomic::AtomicU8;
 
 use alloc::{boxed::Box, sync::Arc, vec::Vec};

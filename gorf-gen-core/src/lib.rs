@@ -15,7 +15,7 @@ pub fn emit(a: &GTerm<String, Infallible>, opts: &Opts) -> proc_macro2::TokenStr
     let n = {
         if let Some(s) = a.scott() {
             let mut v = quote! {
-                let mut _tv = ::alloc::vec::Vec::new();
+                let mut _tv = #rt::alloc::vec::Vec::new();
             };
             for a in s.with {
                 let a = emit(&a, opts);
@@ -29,7 +29,9 @@ pub fn emit(a: &GTerm<String, Infallible>, opts: &Opts) -> proc_macro2::TokenStr
             v = quote! {
                 {
                 #v;
-                #rt::scott(#i,#n,_tv.into())
+                #rt::scott(#i,#n,match _tv{
+                    _tv => #rt::__::core::convert::Into::into(_tv),
+                })
                 }
             };
             return v;
@@ -49,13 +51,13 @@ pub fn emit(a: &GTerm<String, Infallible>, opts: &Opts) -> proc_macro2::TokenStr
                 let w = v.frees();
                 let f = w.iter().map(|a| format_ident!("{a}"));
                 let mut t = quote! {
-                    #(let #f = #f.clone());*
+                    #(let #f = #rt::__::core::clone::Clone::clone(&#f));*
                 };
                 let v = emit(v, opts);
                 quote! {
                     {
                         #t;
-                       #rt::B(::alloc::sync::Arc::new(move|#b|{
+                       #rt::B(#rt::alloc::sync::Arc::new(move|#b|{
                             #t;
                             return #v;
                         }))
@@ -86,7 +88,7 @@ pub fn emit(a: &GTerm<String, Infallible>, opts: &Opts) -> proc_macro2::TokenStr
     let w = a.frees();
     let f = w.iter().map(|a| format_ident!("{a}"));
     let mut t = quote! {
-        #(let #f = #f.clone());*
+        #(let #f = #rt::__::core::clone::Clone::clone(&#f));*
     };
     return quote! {
         {#t;
