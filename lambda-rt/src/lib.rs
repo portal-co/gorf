@@ -2,7 +2,7 @@
 #[doc(hidden)]
 pub extern crate alloc;
 #[doc(hidden)]
-pub mod __{
+pub mod __ {
     pub use core;
 }
 use core::sync::atomic::AtomicU8;
@@ -71,7 +71,59 @@ pub fn u8_to_term(a: u8) -> B {
         });
     });
 }
+impl From<u8> for B {
+    fn from(value: u8) -> Self {
+        u8_to_term(value)
+    }
+}
+impl From<bool> for B {
+    fn from(value: bool) -> Self {
+        o(move |a| match a.clone() {
+            a => o(move |b| match b.clone() {
+                b => {
+                    if value {
+                        a.clone()
+                    } else {
+                        b
+                    }
+                }
+            }),
+        })
+    }
+}
 pub use gorf_gen_macro::lamc;
+use spin::Mutex;
+pub fn via_reader<T: Into<B> + Clone + 'static>(r: impl FnMut() -> T + 'static) -> B {
+    struct State<F, T> {
+        pub cache: Vec<T>,
+        pub f: F,
+    }
+    fn go<F: FnMut() -> T + 'static, T: Into<B> + Clone + 'static>(
+        s: Arc<Mutex<State<F, T>>>,
+        i: usize,
+    ) -> B {
+        let j = {
+            let mut lock = s.lock();
+            while lock.cache.len() <= i {
+                let f = (lock.f)();
+                lock.cache.push(f);
+            }
+            lock.cache[i].clone()
+        };
+        o(move |arg| match s.clone() {
+            s => match j.clone() {
+                j => ((arg.0)(&j.into()).0)(&go(s, i + 1)),
+            },
+        })
+    }
+    return go(
+        Arc::new(Mutex::new(State {
+            cache: Default::default(),
+            f: r,
+        })),
+        0,
+    );
+}
 
 #[cfg(test)]
 mod tests {

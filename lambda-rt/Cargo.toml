@@ -10,3 +10,4 @@ description = "Lambda calulcus backend library"
 [dependencies]
 dyn-clone = "1.0.16"
 gorf-gen-macro = {version="0.1.0",path="../gorf-gen-macro"}
+spin = "0.10.0"
