@@ -15,7 +15,7 @@ pub fn encode(a: &Term) -> Box<dyn Iterator<Item = bool> + '_> {
         }
     }
 }
-pub fn decode(a: &mut impl Iterator<Item = bool>) -> Option<Term> {
+pub fn decode(a: &mut (dyn Iterator<Item = bool> + '_)) -> Option<Term> {
     Some(match a.next()? {
         true => {
             let mut i = 0;
