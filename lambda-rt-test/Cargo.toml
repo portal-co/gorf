@@ -1,6 +1,6 @@
 [package]
 name = "lambda-rt-test"
-version = "0.1.1"
+version = "0.2.0-pre.0"
 edition = "2021"
 license = "CC0-1.0"
 description = "Lambda calulcus backend library"
@@ -8,4 +8,4 @@ description = "Lambda calulcus backend library"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-lambda-rt = {version="0.1.0",path="../lambda-rt"}
+lambda-rt = {version="0.2.0-pre.0",path="../lambda-rt"}

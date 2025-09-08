@@ -1,6 +1,6 @@
 [package]
 name = "gorf-gen-macro"
-version = "0.1.1"
+version = "0.2.0-pre.0"
 edition = "2021"
 license = "CC0-1.0"
 description = "Lambda calulcus backend library"
@@ -9,8 +9,8 @@ description = "Lambda calulcus backend library"
 
 [dependencies]
 chumsky = "0.9.3"
-gorf-core = {version="0.1.0",path="../gorf-core"}
-gorf-gen-core = {version="0.1.0",path="../gorf-gen-core"}
+gorf-core = {version="0.2.0-pre.0",path="../gorf-core"}
+gorf-gen-core = {version="0.2.0-pre.0",path="../gorf-gen-core"}
 proc-macro2 = "1.0.70"
 quote = "1.0.33"
 syn = "2.0.41"
