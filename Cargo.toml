@@ -6,7 +6,7 @@ resolver="2"
 
 # lambda_calculus = "3.3.0"
 
-lambda_calculus = {git="https://github.com/portal-co/lambda_calculus.git",branch="pr/no_std"}
+lambda_calculus = {git="https://github.com/portal-co/lambda_calculus.git",branch="pr/no_std",version="*"}
 
 
 webc = { version = "6.0.0-rc1", default-features = false, features = ["package"] }
