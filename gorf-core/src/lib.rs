@@ -261,8 +261,8 @@ impl Display for Id {
 }
 // pub trait SimpleBinder {}
 macro_rules! simple_binder {
-    ($x:ty) => {
-        impl $crate::Binder for $x {
+    ( $x:ty $(=> <$($a:ident)*>)?) => {
+        impl $(<$($a)*>)? $crate::Binder for $x {
             type Var = $x;
             type Wrap<X: $crate::Binder> = X;
             fn get_var(self) -> Self::Var {
@@ -287,6 +287,9 @@ macro_rules! simple_binder {
 simple_binder!(usize);
 simple_binder!(String);
 simple_binder!(Id);
+#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug, Serialize, Deserialize)]
+pub struct Base<T>(pub T);
+simple_binder!( Base<T> => <T>);
 #[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug, Serialize, Deserialize)]
 pub enum GTerm<V: Binder, M> {
     Undef,
