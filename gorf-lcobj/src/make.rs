@@ -2,7 +2,7 @@ use crate::{Obj, Symbol};
 use alloc::collections::BTreeMap;
 use alloc::{format, vec};
 use core::convert::Infallible;
-use gorf_core::{brujin, debrijun, Id};
+use gorf_core::{brujin, brujin::debrijun, Id};
 use gorf_kiselyov::{RealSki, Ski};
 pub fn bake_ski(a: &Ski, x: &mut Obj<Id, Infallible>) -> Id {
     let i: Id = format!("__{a:?}").into();
@@ -49,7 +49,7 @@ pub fn bake_ski(a: &Ski, x: &mut Obj<Id, Infallible>) -> Id {
     return i;
 }
 pub fn bake(a: &Symbol<Id, Infallible>, p: &str, x: &mut Obj<Id, Infallible>) {
-    let s = bake_ski(&Ski::convert_default(brujin(a.r#impl.clone())), x);
+    let s = bake_ski(&Ski::convert_default(brujin::brujin(a.r#impl.clone())), x);
     x.syms.insert(
         Id(format!("{p}")),
         Symbol {
