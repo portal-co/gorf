@@ -1,8 +1,7 @@
-use std::convert::Infallible;
-
 use chumsky::Parser;
 use gorf_core::GTerm;
 use proc_macro2::TokenStream;
+use std::convert::Infallible;
 // use proc_macro::TokenStream;
 use quasiquote::quasiquote;
 use quote::{format_ident, quote};
@@ -28,9 +27,7 @@ pub fn emit(a: &GTerm<String, Infallible>, opts: &Opts) -> proc_macro2::TokenStr
             let n = s.cases.len();
             let with = s.with.iter().map(|a| emit(a, opts));
             let v = quote! {
-
                 #rt::scott(#i,#n,#rt::alloc::sync::Arc::new([#(#with),*]))
-
             };
             return v;
         }
@@ -60,9 +57,7 @@ pub fn emit(a: &GTerm<String, Infallible>, opts: &Opts) -> proc_macro2::TokenStr
                 let v = emit(v, opts);
                 let v = t(v);
                 t(quote! {
-
                        #rt::B(#rt::alloc::sync::Arc::new(move|#b|#v))
-
                 })
             }
             GTerm::App(a) => {
@@ -97,7 +92,6 @@ pub fn emit(a: &GTerm<String, Infallible>, opts: &Opts) -> proc_macro2::TokenStr
         }
     };
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;

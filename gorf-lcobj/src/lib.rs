@@ -1,11 +1,13 @@
 #![no_std]
 extern crate alloc;
-use alloc::{
-    boxed::Box, collections::{BTreeMap, BTreeSet}, string::String, vec::Vec};use core::{
-    fmt::Display,
-};
 use alloc::format;
-
+use alloc::{
+    boxed::Box,
+    collections::{BTreeMap, BTreeSet},
+    string::String,
+    vec::Vec,
+};
+use core::fmt::Display;
 use gorf_core::{Binder, GTerm};
 use serde::{Deserialize, Serialize};
 pub mod make;
@@ -18,7 +20,6 @@ pub struct Symbol<V: Binder, M> {
     ))]
     pub r#impl: GTerm<V, M>,
 }
-
 impl<V: Binder<Var: Clone> + Clone, M: Clone> Clone for Symbol<V, M> {
     fn clone(&self) -> Self {
         Self {
@@ -27,7 +28,6 @@ impl<V: Binder<Var: Clone> + Clone, M: Clone> Clone for Symbol<V, M> {
         }
     }
 }
-
 impl<V: Binder, M> Symbol<V, M> {
     pub fn emit(self) -> GTerm<V, M> {
         return self
@@ -73,7 +73,6 @@ impl<V: Binder<Var: Clone> + From<String> + Display + Ord + Clone, M: Clone> Obj
         for d in s.deps.iter() {
             b = gorf_core::app(b, self.rbake(d, &stack))
         }
-
         return gorf_core::app(
             gorf_core::abs(
                 v.clone(),

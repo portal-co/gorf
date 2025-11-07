@@ -1,5 +1,4 @@
 use std::{collections::BTreeSet, iter::{empty, once}};
-
 use anyhow::Context;
 use either::Either;
 use id_arena::Id;
@@ -9,7 +8,6 @@ use rat_ir::{
     Block, BlockTarget, Bound, BoundExt, BoundOp, BoundSelect, BoundTerm, BoundType, Call, Func,
     Use, Value,
 };
-
 use crate::{abs, app, var, Binder, GTerm};
 pub trait Thing<O, T, Y, S, D, V: Binder, M> {
     fn go(
@@ -38,7 +36,6 @@ impl<O, T, Y, S, D, V: Binder, M, A: Thing<O, T, Y, S, D, V, M>, B: Thing<O, T, 
             Either::Right(b) => b.go(m, f, k),
         }
     }
-
     fn targets(
         &self,
         m: &Module<O, T, Y, S, D>,
@@ -64,7 +61,6 @@ where
     ) -> anyhow::Result<GTerm<V, M>> {
         self.0.go(m, f, k)
     }
-
     fn targets(
         &self,
         m: &Module<BoundOp<B>, BoundTerm<B>, BoundType<B>, BoundSelect<B>, D>,
@@ -92,7 +88,6 @@ where
     ) -> anyhow::Result<GTerm<V, M>> {
         self.0.go(m, f, k)
     }
-
     fn targets(
         &self,
         m: &Module<BoundOp<B>, BoundTerm<B>, BoundType<B>, BoundSelect<B>, D>,
@@ -245,7 +240,6 @@ impl<
         }
         return Ok(t);
     }
-
     fn targets(
         &self,
         m: &Module<O, T, Y, S, D>,
@@ -279,7 +273,6 @@ impl<
         let v = var(V::from(self.val.value));
         return Ok(app(app(v, then), els));
     }
-
     fn targets(
         &self,
         m: &Module<O, T, Y, S, D>,
@@ -313,14 +306,12 @@ impl<
         for v in vars(m, self.func, m.funcs[self.func].entry) {
             t = app(t, var(v));
         }
-
         for r in self.params.iter() {
             t = app(t, var(V::from(r.value)));
         }
         t = app(t, var(V::from(format!("return"))));
         return Ok(t);
     }
-
     fn targets(
         &self,
         m: &Module<O, T, Y, S, D>,
@@ -352,10 +343,8 @@ impl<
         for v in vars(m, self.func, m.funcs[self.func].entry) {
             t = app(t, var(v));
         }
-
         return Ok(t);
     }
-
     fn targets(
         &self,
         m: &Module<O, T, Y, S, D>,
@@ -385,7 +374,6 @@ impl<
 //     ) -> anyhow::Result<GTerm<V, M>> {
 //         Ok(abs(V::from(format!("$")), var(V::from(format!("$")))))
 //     }
-    
 //     fn targets(
 //         &self,
 //         m: &Module<O, T, Y, S, D>,
@@ -418,7 +406,6 @@ impl<
             var(V::from(self.wrapped.value)),
         ));
     }
-
     fn targets(
         &self,
         m: &Module<O, T, Y, S, D>,

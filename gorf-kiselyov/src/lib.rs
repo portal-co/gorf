@@ -1,8 +1,6 @@
 use lambda_calculus::Term;
-
 // use crate::underload::{Underload, K, underload_parser};
-
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash,Debug)]
+#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug)]
 pub enum Ski {
     S,
     K,

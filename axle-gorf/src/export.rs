@@ -1,12 +1,9 @@
 use std::{clone, collections::BTreeMap, convert::Infallible};
-
 use anyhow::Context;
 use axle::{Func, Module, ParamID, ValueID};
-
 use gorf_core::{abs, app, var, GTerm, SimpleBinder};
 use id_arena::Id;
 use indexmap::IndexMap;
-
 use crate::Nope;
 #[derive(Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Key<O, T, D, S> {
@@ -28,7 +25,6 @@ impl<O, T, D, S> Clone for Key<O, T, D, S> {
 pub struct Bind<O, T, D, S> {
     pub id: Id<Func<O, T, D, S>>,
 }
-
 impl<O, T, D, S> SimpleBinder for Key<O, T, D, S> {}
 type Term<O, T, D, S> = gorf_core::GTerm<Key<O, T, D, S>, Infallible>;
 pub trait GorfOp<O, T, D, S> {
@@ -94,7 +90,6 @@ impl<O, T, D, S> GorfOp<O, T, D, S> for App1 {
 pub trait GorfTerm<O, T, D, S> {
     fn term(&self) -> anyhow::Result<Term<O, T, D, S>>;
 }
-
 pub fn translate<O: GorfOp<O, T, D, S>, T: GorfTerm<O, T, D, S>, D: Nope, S>(
     m: &Module<O, T, D, S>,
     f: Id<Func<O, T, D, S>>,

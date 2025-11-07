@@ -1,12 +1,9 @@
+use crate::{Obj, Symbol};
 use alloc::collections::BTreeMap;
+use alloc::{format, vec};
 use core::convert::Infallible;
-use alloc::{format,vec};
-
 use gorf_core::{brujin, debrijun, Id};
 use gorf_kiselyov::{RealSki, Ski};
-
-use crate::{Obj, Symbol};
-
 pub fn bake_ski(a: &Ski, x: &mut Obj<Id, Infallible>) -> Id {
     let i: Id = format!("__{a:?}").into();
     if x.syms.contains_key(&i) {

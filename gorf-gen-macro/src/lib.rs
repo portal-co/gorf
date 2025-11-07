@@ -1,12 +1,10 @@
 extern crate proc_macro;
-use std::convert::Infallible;
-
 use chumsky::Parser;
 use gorf_gen_core::Opts;
 use proc_macro::TokenStream;
 use quote::quote;
+use std::convert::Infallible;
 use syn::{parse::Parse, parse_macro_input, Ident, LitStr, Token};
-
 struct X {
     pub s: LitStr,
     pub opts: Opts,

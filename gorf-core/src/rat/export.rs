@@ -1,15 +1,11 @@
 use std::{collections::BTreeMap, f32::consts::E, marker::PhantomData};
-
 use anyhow::Context;
 use id_arena::Id;
 use rat_ir::{module::Module, no_push, util::{Push, Ret}, Block, Call, Func, Use, Value};
-
 use crate::{Binder, GTerm};
 pub struct CallVar{
-
 }
 no_push!(type CallVar;);
-
 pub fn export<
     V: Binder<Var = V> + Eq + Ord + Clone,
     M: Clone,

@@ -3,7 +3,6 @@ use gorf_core::{Binder, GTerm};
 use id_arena::Id;
 use indexmap::IndexMap;
 use std::{collections::HashMap, fmt::format, hash::Hash};
-
 use crate::export::{App1, Bind};
 pub trait Return {
     fn r#return(x: ValueID) -> Self;
@@ -85,7 +84,6 @@ impl<
                         ),
                     );
                 }
-
                 c
             }
             GTerm::Mix(_) => todo!(),

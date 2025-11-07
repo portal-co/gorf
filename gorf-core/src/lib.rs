@@ -3,13 +3,12 @@
 extern crate alloc;
 use alloc::boxed::Box;
 use alloc::collections::{BTreeMap, BTreeSet};
-use alloc::string::String;
 use alloc::format;
-use alloc::vec::Vec;
+use alloc::string::String;
 use alloc::vec;
-use core::{convert::Infallible, fmt::Display, hash::Hash, marker::PhantomData, ops::Index};
-
+use alloc::vec::Vec;
 use chumsky::{prelude::*, text::keyword, Error};
+use core::{convert::Infallible, fmt::Display, hash::Hash, marker::PhantomData, ops::Index};
 use either::Either::{self, Left, Right};
 use lambda_calculus::Term::{self, Abs, App, Var};
 use num_bigint::{BigUint, ToBigUint};
@@ -132,7 +131,6 @@ use serde::{Deserialize, Serialize};
 // pub fn bc64(x: u64) -> lambda_calculus::Term {
 //     return bc(x.to_biguint().unwrap());
 // }
-
 pub struct Ref<'a, V: Binder, M> {
     pub current: &'a mut GTerm<V, M>,
 }
@@ -140,14 +138,12 @@ impl<'a, V: Binder, M> Ref<'a, V, M> {
     pub fn app(&mut self, x: GTerm<V, M>) {
         let mut b = Box::new((x, GTerm::Undef));
         let c = unsafe { core::mem::transmute::<_, &'a mut (GTerm<V, M>, GTerm<V, M>)>(&mut *b) };
-
         *self.current = GTerm::App(b);
         self.current = &mut c.1;
     }
     pub fn abs(&mut self, x: V) {
         let mut b = Box::new((x, GTerm::Undef));
         let c = unsafe { core::mem::transmute::<_, &'a mut (V, GTerm<V, M>)>(&mut *b) };
-
         *self.current = GTerm::Abs(b);
         self.current = &mut c.1;
     }
@@ -159,7 +155,6 @@ impl<'a, V: Binder, M> Ref<'a, V, M> {
         self.abs(v.clone());
     }
 }
-
 pub trait Binder {
     type Var: Binder<Var = Self::Var>;
     type Wrap<X: Binder>: Binder<Var = X::Var>;
@@ -211,19 +206,15 @@ where
     fn undef(&mut self) -> Self::Output {
         GTerm::Undef
     }
-
     fn var(&mut self, v: V::Var) -> Self::Output {
         crate::var(v)
     }
-
     fn selfreference(&mut self, v: Self::Output) -> Self::Output {
         crate::app(v.clone(), v.clone())
     }
-
     fn abs(&mut self, b: V, o: Self::Output) -> Self::Output {
         crate::abs(b, o)
     }
-
     fn app(&mut self, a: Self::Output, b: Self::Output) -> Self::Output {
         crate::app(a, b)
     }
@@ -296,7 +287,6 @@ macro_rules! simple_binder {
 simple_binder!(usize);
 simple_binder!(String);
 simple_binder!(Id);
-
 #[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug, Serialize, Deserialize)]
 pub enum GTerm<V: Binder, M> {
     Undef,
@@ -305,7 +295,6 @@ pub enum GTerm<V: Binder, M> {
     App(Box<(GTerm<V, M>, GTerm<V, M>)>),
     Mix(M),
 }
-
 pub fn parser<'a, Y: 'a + 'static, X: 'a + 'static + Binder, E: Error<char> + 'a + 'static>(
     x: impl Parser<char, X, Error = E> + 'a + 'static + Clone,
     v: impl Parser<char, X::Var, Error = E> + 'a + 'static + Clone,
@@ -399,11 +388,9 @@ pub fn str_parser() -> impl Parser<char, GTerm<String, Infallible>, Error = Simp
         void(),
     );
 }
-
 #[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash)]
 #[repr(transparent)]
 pub struct Scope<T: Binder>(pub BTreeMap<T::Var, T>);
-
 impl<V: Binder, M> GTerm<V, M> {
     pub fn to_args<'a>(&'a self, args: &mut Vec<&'a GTerm<V, M>>) -> &'a GTerm<V, M> {
         let GTerm::App(k) = self else {
@@ -674,19 +661,15 @@ where
         return None;
     }
 }
-
 pub fn var<V: Binder, M>(a: V::Var) -> GTerm<V, M> {
     return GTerm::Var(a);
 }
-
 pub fn abs<V: Binder, M>(a: V, b: GTerm<V, M>) -> GTerm<V, M> {
     return GTerm::Abs(Box::new((a, b)));
 }
-
 pub fn app<V: Binder, M>(a: GTerm<V, M>, b: GTerm<V, M>) -> GTerm<V, M> {
     return GTerm::App(Box::new((a, b)));
 }
-
 pub fn debrijun_internal<X: From<usize> + Binder, Y>(x: Term, depth: usize) -> GTerm<X, Y>
 where
     <X as Binder>::Var: From<usize>,
@@ -789,12 +772,10 @@ where
 {
     return brujin_map_f_internal(t, &BTreeMap::new(), 1, into);
 }
-
 #[cfg(test)]
 mod tests {
-    use chumsky::Stream;
-
     use super::*;
+    use chumsky::Stream;
     #[test]
     fn rtrip() {
         let a = lambda_calculus::parse(

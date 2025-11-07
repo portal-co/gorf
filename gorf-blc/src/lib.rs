@@ -2,9 +2,7 @@
 extern crate alloc;
 use alloc::boxed::Box;
 use core::iter::once;
-
 use lambda_calculus::Term;
-
 pub fn encode(a: &Term) -> Box<dyn Iterator<Item = bool> + '_> {
     match a {
         Term::Var(a) => Box::new((0..=*a).map(|_| true).chain(once(false))),

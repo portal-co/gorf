@@ -5,20 +5,17 @@ pub extern crate alloc;
 pub mod __ {
     pub use core;
 }
-use core::sync::atomic::AtomicU8;
-
 use alloc::{boxed::Box, sync::Arc, vec::Vec};
+use core::sync::atomic::AtomicU8;
 use dyn_clone::DynClone;
 #[derive(Clone)]
 pub struct B(pub Arc<dyn O>);
 pub trait O: Fn(&B) -> B {}
 impl<T: Fn(&B) -> B> O for T {}
 // dyn_clone::clone_trait_object!(O);
-
 pub fn o<A: O + 'static>(a: A) -> B {
     return B(Arc::new(a));
 }
-
 pub fn K(a: B) -> B {
     return B(Arc::new(move |_| a.clone()));
 }
@@ -124,11 +121,9 @@ pub fn via_reader<T: Into<B> + Clone + 'static>(r: impl FnMut() -> T + 'static) 
         0,
     );
 }
-
 #[cfg(test)]
 mod tests {
     use super::*;
-
     // #[test]
     // fn test_id(){
     //     let a = lamc!("\\a.a");
