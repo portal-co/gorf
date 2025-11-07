@@ -1,6 +1,6 @@
 extern crate proc_macro;
 use chumsky::Parser;
-use gorf_gen_core::Opts;
+use gorf_gen_core::codegen::Opts;
 use proc_macro::TokenStream;
 use quote::quote;
 use std::convert::Infallible;
@@ -36,7 +36,7 @@ impl Parse for X {
 pub fn lamc(tokens: TokenStream) -> TokenStream {
     let s = parse_macro_input!(tokens as X);
     let g = gorf_core::str_parser().parse(s.s.value()).unwrap();
-    return TokenStream::from(gorf_gen_core::emit(&g, &s.opts));
+    return TokenStream::from(gorf_gen_core::codegen::emit(&g, &s.opts));
 }
 #[cfg(test)]
 mod tests {
