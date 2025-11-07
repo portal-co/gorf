@@ -1,5 +1,5 @@
 use chumsky::Parser;
-use gorf_core::GTerm;
+use gorf_core::types::GTerm;
 use proc_macro2::TokenStream;
 use std::convert::Infallible;
 // use proc_macro::TokenStream;

@@ -8,7 +8,7 @@ use alloc::{
     vec::Vec,
 };
 use core::fmt::Display;
-use gorf_core::{Binder, GTerm};
+use gorf_core::{Binder,types:: GTerm};
 use serde::{Deserialize, Serialize};
 pub mod make;
 #[derive(Serialize, Deserialize)]

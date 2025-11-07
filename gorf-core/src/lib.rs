@@ -287,25 +287,8 @@ macro_rules! simple_binder {
 simple_binder!(usize);
 simple_binder!(String);
 simple_binder!(Id);
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug, Serialize, Deserialize)]
-pub struct Base<T>(pub T);
-simple_binder!( Base<T> => <T>);
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug, Serialize, Deserialize)]
-pub enum GTerm<V: Binder, M> {
-    Undef,
-    Var(V::Var),
-    Abs(Box<(V, GTerm<V, M>)>),
-    App(Box<(GTerm<V, M>, GTerm<V, M>)>),
-    Mix(M),
-}
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug, Serialize)]
-pub enum GTermRef<'a, V: Binder, M> {
-    Undef,
-    Var(V::Var),
-    Abs(&'a (V, GTermRef<'a, V, M>)),
-    App(&'a (GTermRef<'a, V, M>, GTermRef<'a, V, M>)),
-    Mix(M),
-}
+pub mod types;
+use types::*;
 pub fn parser<'a, Y: 'a + 'static, X: 'a + 'static + Binder, E: Error<char> + 'a + 'static>(
     x: impl Parser<char, X, Error = E> + 'a + 'static + Clone,
     v: impl Parser<char, X::Var, Error = E> + 'a + 'static + Clone,
@@ -399,21 +382,8 @@ pub fn str_parser() -> impl Parser<char, GTerm<String, Infallible>, Error = Simp
         void(),
     );
 }
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash)]
-#[repr(transparent)]
-pub struct Scope<T: Binder>(pub BTreeMap<T::Var, T>);
+
 pub mod impls;
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash)]
-pub struct Scott<V: Binder, M> {
-    pub cases: Vec<V::Var>,
-    pub current_case: usize,
-    pub with: Vec<GTerm<V, M>>,
-}
-#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash)]
-pub struct Let<V: Binder<Var: Ord>, M> {
-    pub vars: BTreeMap<V::Var, GTerm<V, M>>,
-    pub body: GTerm<V, M>,
-}
 pub fn var<V: Binder, M>(a: V::Var) -> GTerm<V, M> {
     return GTerm::Var(a);
 }
