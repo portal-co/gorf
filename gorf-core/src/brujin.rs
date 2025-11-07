@@ -1,25 +1,25 @@
 use crate::*;
-pub fn debrijun_internal<X: From<usize> + Binder, Y>(x: Term, depth: usize) -> GTerm<X, Y>
+pub fn debrujin_internal<X: From<usize> + Binder, Y>(x: Term, depth: usize) -> GTerm<X, Y>
 where
     <X as Binder>::Var: From<usize>,
 {
     match x {
         Var(0) => GTerm::Undef,
         Var(v) => GTerm::Var((depth - v).into()),
-        Abs(a) => GTerm::Abs(Box::new((depth.into(), debrijun_internal(*a, depth + 1)))),
+        Abs(a) => GTerm::Abs(Box::new((depth.into(), debrujin_internal(*a, depth + 1)))),
         App(b) => {
             let (a, b) = *b;
-            let a = debrijun_internal(a, depth);
-            let b = debrijun_internal(b, depth);
+            let a = debrujin_internal(a, depth);
+            let b = debrujin_internal(b, depth);
             return GTerm::App(Box::new((a, b)));
         }
     }
 }
-pub fn debrijun<X: From<usize> + Binder, Y>(x: Term) -> GTerm<X, Y>
+pub fn debrujin<X: From<usize> + Binder, Y>(x: Term) -> GTerm<X, Y>
 where
     <X as Binder>::Var: From<usize>,
 {
-    return debrijun_internal(x, 1);
+    return debrujin_internal(x, 1);
 }
 pub fn brujin_internal<X: Binder>(
     t: GTerm<X, Infallible>,

@@ -406,7 +406,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            brujin::brujin::<usize>(brujin::brujin_map(brujin::debrijun::<usize, Infallible>(a.clone()))),
+            brujin::brujin::<usize>(brujin::brujin_map(brujin::debrujin::<usize, Infallible>(a.clone()))),
             a
         );
     }
@@ -425,7 +425,7 @@ mod tests {
     }
     #[test]
     fn scott_simple() {
-        let a = brujin::debrijun::<usize, Infallible>(
+        let a = brujin::debrujin::<usize, Infallible>(
             lambda_calculus::parse("\\a.a", lambda_calculus::term::Notation::Classic).unwrap(),
         );
         // assert_eq!(
@@ -443,14 +443,14 @@ mod tests {
     }
     #[test]
     fn scott_field() {
-        let ab = brujin::debrijun::<usize, Infallible>(
+        let ab = brujin::debrujin::<usize, Infallible>(
             lambda_calculus::parse(
                 "\\c.\\a.a (\\b.b)",
                 lambda_calculus::term::Notation::Classic,
             )
             .unwrap(),
         );
-        let b = brujin::debrijun::<usize, Infallible>(
+        let b = brujin::debrujin::<usize, Infallible>(
             lambda_calculus::parse("\\a.a", lambda_calculus::term::Notation::Classic).unwrap(),
         );
         // assert_eq!(
@@ -470,7 +470,7 @@ mod tests {
     }
     #[test]
     fn scott_bool() {
-        let ab = brujin::debrijun::<usize, Infallible>(
+        let ab = brujin::debrujin::<usize, Infallible>(
             lambda_calculus::parse("\\b.\\a.a", lambda_calculus::term::Notation::Classic).unwrap(),
         );
         // assert_eq!(
