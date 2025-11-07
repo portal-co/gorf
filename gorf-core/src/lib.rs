@@ -298,6 +298,14 @@ pub enum GTerm<V: Binder, M> {
     App(Box<(GTerm<V, M>, GTerm<V, M>)>),
     Mix(M),
 }
+#[derive(Eq, Ord, Clone, PartialEq, PartialOrd, Hash, Debug, Serialize)]
+pub enum GTermRef<'a, V: Binder, M> {
+    Undef,
+    Var(V::Var),
+    Abs(&'a (V, GTermRef<'a, V, M>)),
+    App(&'a (GTermRef<'a, V, M>, GTermRef<'a, V, M>)),
+    Mix(M),
+}
 pub fn parser<'a, Y: 'a + 'static, X: 'a + 'static + Binder, E: Error<char> + 'a + 'static>(
     x: impl Parser<char, X, Error = E> + 'a + 'static + Clone,
     v: impl Parser<char, X::Var, Error = E> + 'a + 'static + Clone,
@@ -673,108 +681,7 @@ pub fn abs<V: Binder, M>(a: V, b: GTerm<V, M>) -> GTerm<V, M> {
 pub fn app<V: Binder, M>(a: GTerm<V, M>, b: GTerm<V, M>) -> GTerm<V, M> {
     return GTerm::App(Box::new((a, b)));
 }
-pub fn debrijun_internal<X: From<usize> + Binder, Y>(x: Term, depth: usize) -> GTerm<X, Y>
-where
-    <X as Binder>::Var: From<usize>,
-{
-    match x {
-        Var(0) => GTerm::Undef,
-        Var(v) => GTerm::Var((depth - v).into()),
-        Abs(a) => GTerm::Abs(Box::new((depth.into(), debrijun_internal(*a, depth + 1)))),
-        App(b) => {
-            let (a, b) = *b;
-            let a = debrijun_internal(a, depth);
-            let b = debrijun_internal(b, depth);
-            return GTerm::App(Box::new((a, b)));
-        }
-    }
-}
-pub fn debrijun<X: From<usize> + Binder, Y>(x: Term) -> GTerm<X, Y>
-where
-    <X as Binder>::Var: From<usize>,
-{
-    return debrijun_internal(x, 1);
-}
-pub fn brujin_internal<X: Binder>(
-    t: GTerm<X, Infallible>,
-    m: &BTreeMap<<X as Binder>::Var, usize>,
-) -> Term
-where
-    <X as Binder>::Var: Eq + Ord + Clone,
-{
-    match t {
-        GTerm::Undef => Var(0),
-        GTerm::Var(a) => Var(m[&a]),
-        GTerm::Abs(a) => {
-            let (k, w) = *a;
-            let mut n = BTreeMap::new();
-            for (a, b) in m.iter() {
-                n.insert(a.clone(), *b + 1);
-            }
-            n.insert(k.get_var(), 1);
-            return Abs(Box::new(brujin_internal(w, &n)));
-        }
-        GTerm::App(b) => {
-            let (a, b) = *b;
-            let a = brujin_internal(a, m);
-            let b = brujin_internal(b, m);
-            return App(Box::new((a, b)));
-        }
-        GTerm::Mix(x) => match x {},
-    }
-}
-pub fn brujin<X: Binder>(t: GTerm<X, Infallible>) -> Term
-where
-    <X as Binder>::Var: Eq + Ord + Clone,
-{
-    return brujin_internal(t, &BTreeMap::new());
-}
-pub fn brujin_map_f_internal<X: Binder, Y: Binder, M>(
-    t: GTerm<X, Infallible>,
-    m: &BTreeMap<<X as Binder>::Var, usize>,
-    depth: usize,
-    into: &mut impl FnMut(usize) -> Y,
-) -> GTerm<Y, M>
-where
-    <X as Binder>::Var: Eq + Ord + Clone,
-{
-    match t {
-        GTerm::Undef => GTerm::Undef,
-        GTerm::Var(a) => GTerm::Var(into(depth - m[&a]).get_var()),
-        GTerm::Abs(a) => {
-            let (k, w) = *a;
-            let mut n = BTreeMap::new();
-            for (a, b) in m.iter() {
-                n.insert(a.clone(), *b + 1);
-            }
-            n.insert(k.get_var(), 1);
-            return abs(into(depth), brujin_map_f_internal(w, &n, depth + 1, into));
-        }
-        GTerm::App(b) => {
-            let (a, b) = *b;
-            let a = brujin_map_f_internal(a, m, depth, into);
-            let b = brujin_map_f_internal(b, m, depth, into);
-            return app(a, b);
-        }
-        GTerm::Mix(x) => match x {},
-    }
-}
-pub fn brujin_map<X: Binder, Y: Binder + From<usize>, M>(t: GTerm<X, Infallible>) -> GTerm<Y, M>
-where
-    <X as Binder>::Var: Eq + Ord + Clone,
-    <Y as Binder>::Var: From<usize>,
-{
-    return brujin_map_f_internal(t, &BTreeMap::new(), 1, &mut |a| a.into());
-}
-pub fn brujin_map_f<X: Binder, Y: Binder, M>(
-    t: GTerm<X, Infallible>,
-    into: &mut impl FnMut(usize) -> Y,
-) -> GTerm<Y, M>
-where
-    <X as Binder>::Var: Eq + Ord + Clone,
-{
-    return brujin_map_f_internal(t, &BTreeMap::new(), 1, into);
-}
+pub mod brujin;
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -787,7 +694,7 @@ mod tests {
         )
         .unwrap();
         assert_eq!(
-            brujin::<usize>(brujin_map(debrijun::<usize, Infallible>(a.clone()))),
+            brujin::brujin::<usize>(brujin::brujin_map(brujin::debrijun::<usize, Infallible>(a.clone()))),
             a
         );
     }
@@ -795,7 +702,7 @@ mod tests {
     fn parse() {
         let s = "\\a.\\b.\\c.c a b (\\d.d c b a)";
         let a = lambda_calculus::parse(s, lambda_calculus::term::Notation::Classic).unwrap();
-        let b = str_parser().map(|x| brujin(x)).parse(Stream::from(s));
+        let b = str_parser().map(|x| brujin::brujin(x)).parse(Stream::from(s));
         assert_eq!(b.unwrap(), a);
     }
     #[test]
@@ -806,7 +713,7 @@ mod tests {
     }
     #[test]
     fn scott_simple() {
-        let a = debrijun::<usize, Infallible>(
+        let a = brujin::debrijun::<usize, Infallible>(
             lambda_calculus::parse("\\a.a", lambda_calculus::term::Notation::Classic).unwrap(),
         );
         // assert_eq!(
@@ -824,14 +731,14 @@ mod tests {
     }
     #[test]
     fn scott_field() {
-        let ab = debrijun::<usize, Infallible>(
+        let ab = brujin::debrijun::<usize, Infallible>(
             lambda_calculus::parse(
                 "\\c.\\a.a (\\b.b)",
                 lambda_calculus::term::Notation::Classic,
             )
             .unwrap(),
         );
-        let b = debrijun::<usize, Infallible>(
+        let b = brujin::debrijun::<usize, Infallible>(
             lambda_calculus::parse("\\a.a", lambda_calculus::term::Notation::Classic).unwrap(),
         );
         // assert_eq!(
@@ -843,15 +750,15 @@ mod tests {
         //     }
         // )
         let a = ab.scott().unwrap();
-        assert_eq!(brujin(a.clone().render()), brujin(ab.clone()));
+        assert_eq!(brujin::brujin(a.clone().render()), brujin::brujin(ab.clone()));
         // assert_eq!(a.case_count, 2);
         assert_eq!(a.current_case, 1);
         assert_eq!(a.with.len(), 1);
-        assert_eq!(brujin(b), brujin(a.with[0].clone()))
+        assert_eq!(brujin::brujin(b), brujin::brujin(a.with[0].clone()))
     }
     #[test]
     fn scott_bool() {
-        let ab = debrijun::<usize, Infallible>(
+        let ab = brujin::debrijun::<usize, Infallible>(
             lambda_calculus::parse("\\b.\\a.a", lambda_calculus::term::Notation::Classic).unwrap(),
         );
         // assert_eq!(
@@ -863,7 +770,7 @@ mod tests {
         //     }
         // )
         let a = ab.scott().unwrap();
-        assert_eq!(brujin(a.clone().render()), brujin(ab.clone()));
+        assert_eq!(brujin::brujin(a.clone().render()), brujin::brujin(ab.clone()));
         // assert_eq!(a.case_count, 2);
         assert_eq!(a.current_case, 1);
         assert_eq!(a.with, vec![]);
