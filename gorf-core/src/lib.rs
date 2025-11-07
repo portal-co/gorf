@@ -261,8 +261,8 @@ impl Display for Id {
 }
 // pub trait SimpleBinder {}
 macro_rules! simple_binder {
-    ( $x:ty $(=> <$($a:ident)*>)?) => {
-        impl $(<$($a)*>)? $crate::Binder for $x {
+    ( $x:ty $(=> <$($a:ident),*>)?) => {
+        impl $(<$($a),*>)? $crate::Binder for $x {
             type Var = $x;
             type Wrap<X: $crate::Binder> = X;
             fn get_var(self) -> Self::Var {
