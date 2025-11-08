@@ -1,5 +1,5 @@
 [workspace]
-members=["gorf-core","gorf-kiselyov","lambda-rt","lambda-rt-test","gorf-gen-core","gorf-gen-macro", "gorf-lcobj", "gorf-blc2", "gorf-blc"]
+members=["crates/gorf-core","crates/gorf-kiselyov","crates/lambda-rt","crates/lambda-rt-test","crates/gorf-gen-core","crates/gorf-gen-macro", "crates/gorf-lcobj", "crates/gorf-blc2", "crates/gorf-blc"]
 resolver="2"
 
 [workspace.dependencies]
