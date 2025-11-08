@@ -29,23 +29,24 @@ impl<V: Binder, M> GTerm<V, M> {
             GTerm::Mix(m) => GTerm::Mix(m),
         }
     }
-    pub fn map_all<X: Binder>(
+    pub fn map_all<X: Binder, Cx>(
         self,
-        f: &mut impl FnMut(V::Var) -> X::Var,
-        g: &mut impl FnMut(V) -> X,
+        cx: &mut Cx,
+        f: &mut (dyn FnMut(&mut Cx, V::Var) -> X::Var + '_),
+        g: &mut (dyn FnMut(&mut Cx, V) -> X + '_),
     ) -> GTerm<X, M> {
         match self {
             GTerm::Undef => GTerm::Undef,
-            GTerm::Var(v) => GTerm::Var(f(v)),
+            GTerm::Var(v) => GTerm::Var(f(cx, v)),
             GTerm::Abs(k) => {
                 let (k, w) = *k;
-                let k = g(k);
-                let w = w.map_all(f, g);
+                let k = g(cx, k);
+                let w = w.map_all(cx, f, g);
                 return abs(k, w);
             }
             GTerm::App(a) => {
                 let (a, b) = *a;
-                return app(a.map_all(f, g), b.map_all(f, g));
+                return app(a.map_all(cx, f, g), b.map_all(cx, f, g));
             }
             GTerm::Mix(m) => GTerm::Mix(m),
         }
@@ -157,11 +158,11 @@ where
         None
     }
 }
-impl<'a,V: Binder + Clone + Eq, M: Clone + Eq> GTermRef<'a,V, M>
+impl<'a, V: Binder + Clone + Eq, M: Clone + Eq> GTermRef<'a, V, M>
 where
     V::Var: Eq + Ord + Clone,
 {
-    pub fn is_sapp(&self) -> Option<GTermRef<'a,V, M>> {
+    pub fn is_sapp(&self) -> Option<GTermRef<'a, V, M>> {
         if let GTermRef::App(a) = self {
             let (ref a, ref b) = **a;
             if a.clone() == b.clone() {
@@ -171,7 +172,7 @@ where
         None
     }
 }
-impl<V: Binder + Clone, M: Clone> GTermRef<'_,V, M>
+impl<V: Binder + Clone, M: Clone> GTermRef<'_, V, M>
 where
     V::Var: Eq + Ord + Clone,
 {
