@@ -1,13 +1,14 @@
 # gorf
 
 ## Description
-Project gorf
+A runtime and toolchain for lambda calculus/functional programming (`gorf`), supporting WASM/WebC integration and crypto primitives.
 
 ## Goals
-- [ ] Add project goals
+- [ ] Implement Lambda Calculus runtime
+- [ ] Support distributed execution (Spin/WASM)
 
 ## Progress
-- [ ] Initial setup
+- [ ] Workspace setup with extensive dependencies
 
 ---
 *AI assisted*
